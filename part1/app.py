@@ -1,19 +1,27 @@
 #!/usr/bin/env python3
 """Part 1 starter CLI (Complete the two TODOs in the code below)."""
-from .constants import BANNER, HELP
-from .sonnet import SONNET
+from constants import BANNER, HELP
+from sonnet import SONNET
 
 def manual_count_occurrences(text: str, pattern: str) -> int:
-    """TODO: implement naive manual scan counting overlapping occurrences.
-    Requirements:
-    - case-insensitive (e.g., caller will lowercase inputs)
-    - no str.find, no 'in' for text search, no regex
-    """
-    # Starter: a placeholder returning 0 so tests fail until implemented.
+    text = text.lower()
+    pattern = pattern.lower()
+
     if not text or not pattern:
         return 0
-    # >>> replace the following with a real manual scan <<<
-    return 0
+    if len(pattern) > len(text):
+        return 0
+    else:
+        count = 0
+        for i in range(len(text) - len(pattern) + 1):
+            matches = 0
+            for j in range(len(pattern)):
+                if text[i+j] == pattern[j]:
+                    matches += 1
+            if matches == len(pattern):
+                count += 1
+        return count
+
 
 def print_result(query: str, total: int, title_count: int, line_count: int) -> None:
     print(f"Matches for \"{query}\": {total} (title: {title_count}, lines: {line_count})")
@@ -23,6 +31,7 @@ def main() -> None:
     while True:
         try:
             raw = input("> ").strip()
+            search_item = raw.lower()
         except (EOFError, KeyboardInterrupt):
             print("\nBye.")
             break
@@ -38,15 +47,14 @@ def main() -> None:
             print("Unknown command. Type :help for commands.")
             continue
 
-        # TODO: Search the SONNET title and the SONNET lines for the query given by the user.
-        #  Do this in an case-insensitive way
-        #  title_count reflects the number of occurrences in the title of the sonnet, and line_count those in the lines
-        #  of the sonnet.
-        #  Call your implementation of the function manual_count_occurrences to get the counts in the title and the
-        #  lines of the sonnet.
-
+        title = SONNET["title"].lower()
         title_count = 0
+        title_count += manual_count_occurrences(title, search_item)
+
         line_count = 0
+        for line in SONNET["lines"]:
+            line_count += manual_count_occurrences(line.lower(), search_item)
+
         total = title_count + line_count
         print_result(raw, total, title_count, line_count)
 
